@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "fastify": "^3.18.0",
+    "fastify-env": "^2.1.1",
+    "fastify-jwt": "^3.0.0",
+    "fastify-plugin": "^3.0.0",
+    "fastify-postgres": "^3.5.0",
+    "fastify-swagger": "^4.8.0",
+    "pg": "^8.6.0",
+    "pino-pretty": "^5.0.2"
+  },
+  "name": "new-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
