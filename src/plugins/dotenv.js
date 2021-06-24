@@ -21,6 +21,10 @@ async function dotenv(fastify) {
             },
             SETUP_PASSWORD: {
                 type: 'string',
+            },
+            DB_PORT: {
+                type: 'string',
+                default: 5432
             }
         }
     }
