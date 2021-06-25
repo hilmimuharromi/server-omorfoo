@@ -5,6 +5,7 @@ const keysToCamel = require('./plugins/keysToCamel')
 const userRoutes = require('./routes/userRoutes')
 const setupRoutes = require('./routes/setupRoutes')
 const productRoutes = require('./routes/productRoutes')
+const transactionRoutes = require('./routes/transactionRoutes')
 const connectionDB = require('./plugins/connectDb')
 const bcrypt = require('./plugins/bcrypt')
 const dotenv = require('./plugins/dotenv')
@@ -33,6 +34,7 @@ app.register(connectionDB)
 app.register(bcrypt)
 app.register(userRoutes)
 app.register(setupRoutes)
+app.register(transactionRoutes)
 
 
 
@@ -48,7 +50,7 @@ app.addHook('preHandler', function (req, reply, next) {
 
 productRoutes(app)
 
-app.listen(5000, (err, address) => {
+app.listen(5000, '0.0.0.0', (err, address) => {
     if (err) {
         console.error(err);
         process.exit(1);

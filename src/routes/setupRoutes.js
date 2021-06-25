@@ -14,31 +14,31 @@ async function routes(fastify, options) {
                 username VARCHAR(50) UNIQUE NOT NULL,
                 password VARCHAR NOT NULL,
                 role VARCHAR(50) NOT NULL,
-                created_at TIMESTAMPTZ DEFAULT Now()
+                "createdAt" TIMESTAMPTZ DEFAULT Now()
                 );
     
                 CREATE TABLE IF NOT EXISTS "Products"(
                 id serial PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                product_code VARCHAR(255) UNIQUE NOT NULL,
+                "productCode" VARCHAR(255) UNIQUE NOT NULL,
                 stock INT NOT NULL,
-                minimal_stock INT NOT NULL,
+                "minimalStock" INT NOT NULL,
                 price INT NOT NULL,
-                capital_price INT NOT NULL,
+                "capitalPrice" INT NOT NULL,
                 brand VARCHAR NOT NULL,
                 type VARCHAR NOT NULL,
-                created_at TIMESTAMPTZ DEFAULT Now()
+                "createdAt" TIMESTAMPTZ DEFAULT Now()
                 );
                 
                 CREATE TABLE IF NOT EXISTS "Transactions"(
                     id serial PRIMARY KEY,
-                    user_id INT NOT NULL,
+                    "userId" INT NOT NULL,
                     items jsonb,
-                    transaction_type VARCHAR NOT NULL,
-                    payment_type VARCHAR NOT NULL,
+                    "transactionType" VARCHAR NOT NULL,
+                    "paymentType" VARCHAR NOT NULL,
                     profit INT NOT NULL,
-                    created_at TIMESTAMPTZ DEFAULT Now(),
-                    FOREIGN KEY (user_id)
+                    "createdAt" TIMESTAMPTZ DEFAULT Now(),
+                    FOREIGN KEY ("userId")
                     REFERENCES "Users" (id)
                 )
                 `,

@@ -62,6 +62,7 @@ module.exports = {
                                 id: { type: 'number' },
                                 username: { type: 'string' },
                                 role: { type: 'string' },
+                                createdAt: { type: 'string' },
                             }
                         }
                     },

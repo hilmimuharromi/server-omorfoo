@@ -21,6 +21,7 @@ module.exports = fp(function (fastify, opts, next) {
     };
 
     const keysToCamel = function (o) {
+        console.log('dari key camel   ====>', o)
         if (isObject(o)) {
             const n = {};
 

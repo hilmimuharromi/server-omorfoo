@@ -7,11 +7,11 @@ module.exports = (fastify) => {
         try {
             const { name, productCode, stock, minimalStock, price, capitalPrice, brand, type } = req.body
             const client = await fastify.pg.connect()
-            const query = 'INSERT INTO "Products"( name, product_code, stock, minimal_stock, price, capital_price, brand, type) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *'
+            const query = 'INSERT INTO "Products"( name, "productCode", stock, "minimalStock", price, "capitalPrice", brand, type) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *'
             const values = [name, productCode, stock, minimalStock, price, capitalPrice, brand, type]
             const { rows } = await client.query(query, values)
             client.release()
-            const result = await fastify.keysToCamel(rows[0])
+            const result = rows[0]
             reply.code(201).send({
                 status: 'success',
                 data: result
@@ -31,15 +31,14 @@ module.exports = (fastify) => {
             const client = await fastify.pg.connect()
 
             const query = `UPDATE "Products"
-            SET name=$1, product_code = $2, stock=$3, minimal_stock=$4, price=$5, capital_price=$6, brand=$7, type=$8
+            SET name=$1, "productCode" = $2, stock=$3, "minimalStock"=$4, price=$5, "capitalPrice"=$6, brand=$7, type=$8
             WHERE id = $9 returning *`
 
             const values = [name, productCode, stock, minimalStock, price, capitalPrice, brand, type, id];
 
             const { rows } = await client.query(query, values)
-            // console.log(result, 'result update')
             client.release()
-            const result = await fastify.keysToCamel(rows[0])
+            const result = rows[0]
             reply.code(200).send({
                 status: 'success',
                 data: result
@@ -60,7 +59,7 @@ module.exports = (fastify) => {
             const values = [id];
 
             const { rows } = await client.query(query, values)
-            const result = await fastify.keysToCamel(rows[0])
+            const result = rows[0]
 
             client.release()
             reply.code(200).send({
@@ -80,9 +79,8 @@ module.exports = (fastify) => {
             const client = await fastify.pg.connect()
             const query = `SELECT * FROM "Products"`
             const { rows } = await client.query(query)
-            const result = await fastify.keysToCamel(rows)
+            const result = rows
             client.release()
-            console.log('result get all', result)
             reply.code(200).send({
                 status: 'success',
                 data: result

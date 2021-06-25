@@ -30,6 +30,7 @@ module.exports = {
                     data: {
                         type: 'object',
                         properties: {
+                            id: { type: 'number' },
                             name: { type: 'string' },
                             productCode: { type: 'string' },
                             stock: { type: 'number' },
@@ -37,7 +38,8 @@ module.exports = {
                             price: { type: 'number' },
                             capitalPrice: { type: 'number' },
                             brand: { type: 'string' },
-                            type: { type: 'string' }
+                            type: { type: 'string' },
+                            createdAt: { type: 'string' },
                         }
                     }
                 }
@@ -70,7 +72,7 @@ module.exports = {
                 price: { type: 'number' },
                 capitalPrice: { type: 'number' },
                 brand: { type: 'string' },
-                type: { type: 'string' }
+                type: { type: 'string' },
             }
         },
         response: {
@@ -89,7 +91,8 @@ module.exports = {
                             price: { type: 'number' },
                             capitalPrice: { type: 'number' },
                             brand: { type: 'string' },
-                            type: { type: 'string' }
+                            type: { type: 'string' },
+                            createdAt: { type: 'string' },
                         }
                     }
                 }
@@ -128,7 +131,9 @@ module.exports = {
                             price: { type: 'number' },
                             capitalPrice: { type: 'number' },
                             brand: { type: 'string' },
-                            type: { type: 'string' }
+                            type: { type: 'string' },
+                            createdAt: { type: 'string' },
+
                         }
                     }
                 }
@@ -156,6 +161,7 @@ module.exports = {
                         items: {
                             type: 'object',
                             properties: {
+                                id: { type: 'number' },
                                 name: { type: 'string' },
                                 productCode: { type: 'string' },
                                 stock: { type: 'number' },
@@ -163,7 +169,9 @@ module.exports = {
                                 price: { type: 'number' },
                                 capitalPrice: { type: 'number' },
                                 brand: { type: 'string' },
-                                type: { type: 'string' }
+                                type: { type: 'string' },
+                                createdAt: { type: 'string' },
+
                             }
                         }
                     }

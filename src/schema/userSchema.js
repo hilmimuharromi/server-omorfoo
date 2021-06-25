@@ -21,7 +21,8 @@ module.exports = {
                             username: { type: 'string' },
                             id: { type: 'number' },
                             role: { type: 'string' },
-                            token: { type: 'string' }
+                            token: { type: 'string' },
+                            createdAt: { type: 'string' },
                         }
                     }
                 }
