@@ -1,9 +1,10 @@
 const { dbSchema, userSchema } = require('../schema/setupSchema')
 async function routes(fastify, options) {
+    const client = fastify.db.client
     fastify.post('/setup/db', { schema: dbSchema }, async (req, reply) => {
         try {
 
-            const client = await fastify.pg.connect()
+            // const client = await fastify.pg.connect()
             const { SETUP_PASSWORD } = fastify.config
             const { setupPassword } = req.body
 
@@ -43,7 +44,7 @@ async function routes(fastify, options) {
                 )
                 `,
                 )
-                client.release()
+                // client.release()
                 return result
             } else {
                 throw new Error('tidak memiliki akses')
@@ -58,7 +59,7 @@ async function routes(fastify, options) {
             const { data, setupPassword } = req.body
             const { SETUP_PASSWORD } = fastify.config
             if (setupPassword === SETUP_PASSWORD) {
-                const client = await fastify.pg.connect()
+                // const client = await fastify.pg.connect()
                 const result = await Promise.all(data.map(async (item) => {
                     const query = 'INSERT INTO "Users"(username, password, role) VALUES($1, $2, $3) RETURNING *'
                     const hashPassword = await fastify.bcrypt.hash(item.password)
@@ -68,7 +69,7 @@ async function routes(fastify, options) {
                     return rows[0]
                 }));
 
-                client.release()
+                // client.release()
                 console.log(result)
                 reply.code(201).send({
                     status: 'success',

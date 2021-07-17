@@ -1,5 +1,6 @@
 const { loginSchema, addAdminSchema, allUserSchema, updateUserSchema } = require('../schema/userSchema')
 async function routes(fastify, options) {
+    const client = fastify.db.client
     fastify.post('/user',
         {
             schema: addAdminSchema,
@@ -8,7 +9,6 @@ async function routes(fastify, options) {
             try {
                 const { username, password, role } = req.body
                 const hashPassword = await fastify.bcrypt.hash(password)
-                const client = await fastify.pg.connect()
                 const query = 'INSERT INTO "Users"(username, password, role) VALUES($1, $2, $3) RETURNING *'
                 const values = [username, hashPassword, role]
                 const { rows } = await client.query(query, values,
@@ -17,7 +17,6 @@ async function routes(fastify, options) {
                 delete user.password
                 const token = await reply.jwtSign({ ...user })
                 user.token = token
-                client.release()
                 reply.code(201).send({
                     status: 'success',
                     data: user
@@ -38,7 +37,6 @@ async function routes(fastify, options) {
 
                 const hashPassword = await fastify.bcrypt.hash(password)
                 console.log('update user', req.body, id)
-                const client = await fastify.pg.connect()
                 let query = 'UPDATE "Users" SET username= $2,  role=$3, password=$4 WHERE id = $1 RETURNING *'
                 let values = [id, username, role, hashPassword,]
                 if (!password) {
@@ -47,7 +45,6 @@ async function routes(fastify, options) {
                 }
                 const { rows } = await client.query(query, values,
                 )
-                client.release()
                 reply.code(200).send({
                     status: 'success',
                     data: rows[0]
@@ -62,7 +59,6 @@ async function routes(fastify, options) {
     fastify.post('/login', { schema: loginSchema }, async (req, reply) => {
         try {
             const { username, password } = req.body
-            const client = await fastify.pg.connect()
             const result = await client.query(
                 'SELECT * FROM "Users" WHERE username=$1', [username],
             )
@@ -77,7 +73,6 @@ async function routes(fastify, options) {
             delete user.password
             const token = await reply.jwtSign({ ...user })
             user.token = token
-            client.release()
             reply.code(200).send({
                 status: 'success',
                 data: user
@@ -90,10 +85,8 @@ async function routes(fastify, options) {
     fastify.get('/allusers', { schema: allUserSchema, preValidation: [fastify.authenticate, fastify.ownerAuthorization] }, async (req, reply) => {
 
         try {
-            const client = await fastify.pg.connect()
             const query = 'SELECT * FROM "Users"'
             const { rows } = await client.query(query)
-
             reply.code(200).send({
                 status: 'success',
                 data: rows

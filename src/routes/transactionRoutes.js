@@ -1,13 +1,13 @@
 const { addTransaction, getTransaction } = require('../schema/transactionSchema')
 const moment = require('moment')
 async function routes(fastify, options) {
+    const client = fastify.db.client
     fastify.post('/transaction',
         {
             preValidation: [fastify.authenticate, fastify.adminAuthorization],
             schema: addTransaction
         },
         async (req, reply) => {
-            const client = await fastify.pg.connect()
             try {
                 const { id } = req.user
                 const { items, transactionType, paymentType } = req.body
@@ -51,7 +51,6 @@ async function routes(fastify, options) {
                 client.query("ROLLBACK");
                 reply.code(400).send(error)
             } finally {
-                client.release();
                 console.log("Client is released");
             }
         })
@@ -62,25 +61,13 @@ async function routes(fastify, options) {
         schema: getTransaction
     }, async (req, reply) => {
         const { startDate, endDate } = req.query
-
-        console.log('req.query =>', req.query)
-
         try {
-            const client = await fastify.pg.connect()
 
             let formatStartDate = moment(startDate).subtract(1, 'days').startOf('day')
             let formatEndDate = moment(endDate).subtract(1, 'days').endOf('day')
 
-
-
-            // formatStartDate.setHours(00, 00)
-            // formatEndDate.setHours(23, 59)
-
             const query = `SELECT  * from "Transactions" where "createdAt" between $1 and $2`
             const values = [formatStartDate, formatEndDate]
-
-            console.log('values ======>', values)
-
             const { rows } = await client.query(query, values,)
             if (rows.length > 0) {
                 await Promise.all(rows.map(async (tr) => {
@@ -93,7 +80,6 @@ async function routes(fastify, options) {
                     return tr.items = newItems
                 }))
             }
-            console.log('rows ======>', JSON.stringify(rows))
             reply.code(201).send({
                 status: 'success',
                 data: rows

@@ -1,9 +1,10 @@
 const fp = require("fastify-plugin")
 
 module.exports = fp(async function (fastify, opts) {
+    const client = fastify.db.client
     fastify.decorate("ownerAuthorization", async function (request, reply) {
         try {
-            const client = await fastify.pg.connect()
+            // const client = await fastify.pg.connect()
             const { rows } = await client.query(
                 'SELECT * FROM "Users" WHERE username=$1', [request.user.username],
             )
@@ -17,7 +18,7 @@ module.exports = fp(async function (fastify, opts) {
 
     fastify.decorate("adminAuthorization", async function (request, reply) {
         try {
-            const client = await fastify.pg.connect()
+            // const client = await fastify.pg.connect()
             const { rows } = await client.query(
                 'SELECT * FROM "Users" WHERE username=$1', [request.user.username],
             )
