@@ -8,8 +8,8 @@ async function dbConnector(fastify, options) {
         host: 'localhost',
         password: DB_PASSWORD,
         port: DB_PORT,
-        // idleTimeoutMillis: 5000, // close idle clients after 1 second
-        connectionTimeoutMillis: 5000,
+        idleTimeoutMillis: 5000, // close idle clients after 1 second
+        // connectionTimeoutMillis: 5000,
     })
 }
 
