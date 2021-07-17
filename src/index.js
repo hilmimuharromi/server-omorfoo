@@ -27,6 +27,7 @@ app.register(require('fastify-swagger'), {
     },
 })
 
+
 authorization(app)
 app.register(keysToCamel)
 app.register(dotenv)
@@ -37,9 +38,7 @@ app.register(setupRoutes)
 app.register(transactionRoutes)
 
 
-
 authentication(app)
-// userRoutes(app)
 app.addHook('preHandler', function (req, reply, next) {
     if (req.body && req.url !== '/login') {
         req.log.info({ body: req.body }, 'parsed body')
@@ -55,5 +54,5 @@ app.listen(5000, '0.0.0.0', (err, address) => {
         console.error(err);
         process.exit(1);
     }
-    console.log(`Server running on ${address}`);
+    console.log(`Server running on ${address} `);
 });

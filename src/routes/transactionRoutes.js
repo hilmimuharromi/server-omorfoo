@@ -1,4 +1,5 @@
 const { addTransaction, getTransaction } = require('../schema/transactionSchema')
+const moment = require('moment')
 async function routes(fastify, options) {
     fastify.post('/transaction',
         {
@@ -11,6 +12,7 @@ async function routes(fastify, options) {
                 const { id } = req.user
                 const { items, transactionType, paymentType } = req.body
                 let profit = 0
+                let totalPrice = 0
                 await client.query("BEGIN");
 
                 await Promise.all(items.map(async (item) => {
@@ -20,7 +22,9 @@ async function routes(fastify, options) {
                         client.query("ROLLBACK");
                         throw new Error('Product Not Found')
                     }
-                    profit += item.dealPrice - productDetail.capitalPrice
+                    let itemsProfit = (item.dealPrice - productDetail.capitalPrice) * item.quantity
+                    profit += itemsProfit
+                    totalPrice += item.dealPrice * item.quantity
                     let currentStock = productDetail.stock - item.quantity
 
                     if (currentStock < 0) {
@@ -34,8 +38,8 @@ async function routes(fastify, options) {
                     return rows[0]
                 }));
 
-                const query = 'INSERT INTO "Transactions"("userId", items, "transactionType", "paymentType", profit) VALUES($1, $2, $3, $4, $5) RETURNING *'
-                const values = [id, JSON.stringify(items), transactionType, paymentType, profit]
+                const query = 'INSERT INTO "Transactions"("userId", items, "transactionType", "paymentType", "totalPrice", profit) VALUES($1, $2, $3, $4, $5, $6) RETURNING *'
+                const values = [id, JSON.stringify(items), transactionType, paymentType, totalPrice, profit]
                 const { rows } = await client.query(query, values,)
                 const result = rows[0]
                 await client.query("COMMIT");
@@ -52,7 +56,8 @@ async function routes(fastify, options) {
             }
         })
 
-    fastify.get('/transaction/:params', {
+
+    fastify.get('/transaction', {
         preValidation: [fastify.authenticate, fastify.adminAuthorization],
         schema: getTransaction
     }, async (req, reply) => {
@@ -63,13 +68,32 @@ async function routes(fastify, options) {
         try {
             const client = await fastify.pg.connect()
 
-            let formatStartDate = new Date(new Date(startDate).setHours(00, 00, 00))
-            let formatEndDate = new Date(new Date(endDate).setHours(23, 59, 59))
+            let formatStartDate = moment(startDate).subtract(1, 'days').startOf('day')
+            let formatEndDate = moment(endDate).subtract(1, 'days').endOf('day')
+
+
+
+            // formatStartDate.setHours(00, 00)
+            // formatEndDate.setHours(23, 59)
 
             const query = `SELECT  * from "Transactions" where "createdAt" between $1 and $2`
             const values = [formatStartDate, formatEndDate]
 
+            console.log('values ======>', values)
+
             const { rows } = await client.query(query, values,)
+            if (rows.length > 0) {
+                await Promise.all(rows.map(async (tr) => {
+                    const newItems = await Promise.all(tr.items.map(async (item) => {
+                        const result = await client.query(`SELECT * FROM "Products" where "id" = $1`, [item.product])
+                        let newData = result.rows[0]
+                        let newItem = { ...item, ...newData }
+                        return newItem
+                    }))
+                    return tr.items = newItems
+                }))
+            }
+            console.log('rows ======>', JSON.stringify(rows))
             reply.code(201).send({
                 status: 'success',
                 data: rows

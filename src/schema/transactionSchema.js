@@ -58,6 +58,7 @@ module.exports = {
         },
     },
 
+
     getTransaction: {
         description: 'Get Transaction By Periode',
         tags: ['transaction'],
@@ -67,7 +68,7 @@ module.exports = {
                 Authorization: { type: 'string' }
             }
         },
-        query: {
+        querystring: {
             type: 'object',
             properties: {
                 startDate: { type: 'string' },
@@ -85,16 +86,27 @@ module.exports = {
                         items: {
                             type: 'object',
                             properties: {
+                                id: { type: 'number' },
                                 paymentType: { type: 'string' },
                                 transactionType: { type: 'string' },
                                 profit: { type: 'number' },
+                                totalPrice: { type: 'number' },
                                 createdAt: { type: 'string' },
                                 items: {
                                     type: 'array',
                                     items: {
                                         type: 'object',
                                         properties: {
-                                            product: { type: 'string' },
+                                            id: { type: 'number' },
+                                            name: { type: 'string' },
+                                            productCode: { type: 'string' },
+                                            stock: { type: 'number' },
+                                            minimalStock: { type: 'number' },
+                                            price: { type: 'number' },
+                                            capitalPrice: { type: 'number' },
+                                            brand: { type: 'string' },
+                                            type: { type: 'string' },
+                                            createdAt: { type: 'string' },
                                             capitalPrice: { type: 'number' },
                                             dealPrice: { type: 'number' },
                                             quantity: { type: 'number' },

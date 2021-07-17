@@ -5,6 +5,7 @@ module.exports = fp(async function (fastify, opts) {
         secret: "supersecret"
     })
 
+
     fastify.decorate("authenticate", async function (request, reply) {
         try {
             await request.jwtVerify()
@@ -13,3 +14,4 @@ module.exports = fp(async function (fastify, opts) {
         }
     })
 })
+
