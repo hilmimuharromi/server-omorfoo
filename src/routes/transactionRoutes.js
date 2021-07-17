@@ -63,12 +63,13 @@ async function routes(fastify, options) {
         const { startDate, endDate } = req.query
         try {
 
-            let formatStartDate = moment(startDate).subtract(1, 'days').startOf('day')
-            let formatEndDate = moment(endDate).subtract(1, 'days').endOf('day')
+            let formatStartDate = moment(startDate).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+            let formatEndDate = moment(endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
             const query = `SELECT  * from "Transactions" where "createdAt" between $1 and $2`
             const values = [formatStartDate, formatEndDate]
-            const { rows } = await client.query(query, values,)
+            console.log(values)
+            const { rows } = await client.query(query, values)
             if (rows.length > 0) {
                 await Promise.all(rows.map(async (tr) => {
                     const newItems = await Promise.all(tr.items.map(async (item) => {

@@ -38,6 +38,7 @@ async function routes(fastify, options) {
                     "transactionType" VARCHAR NOT NULL,
                     "paymentType" VARCHAR NOT NULL,
                     profit INT NOT NULL,
+               "totalPrice" INT NOT NULL,
                     "createdAt" TIMESTAMPTZ DEFAULT Now(),
                     FOREIGN KEY ("userId")
                     REFERENCES "Users" (id)
