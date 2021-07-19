@@ -38,8 +38,10 @@ async function routes(fastify, options) {
                     return rows[0]
                 }));
 
-                const query = 'INSERT INTO "Transactions"("userId", items, "transactionType", "paymentType", "totalPrice", profit) VALUES($1, $2, $3, $4, $5, $6) RETURNING *'
-                const values = [id, JSON.stringify(items), transactionType, paymentType, totalPrice, profit]
+                let now = moment().format('YYYY-MM-DD HH:mm:ss')
+
+                const query = 'INSERT INTO "Transactions"("userId", items, "transactionType", "paymentType", "totalPrice", profit, "createdAt") VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *'
+                const values = [id, JSON.stringify(items), transactionType, paymentType, totalPrice, profit, now]
                 const { rows } = await client.query(query, values,)
                 const result = rows[0]
                 await client.query("COMMIT");
@@ -63,7 +65,7 @@ async function routes(fastify, options) {
         const { startDate, endDate } = req.query
         try {
 
-            let formatStartDate = moment(startDate).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+            let formatStartDate = moment(startDate).subtract(1, 'day').startOf('day').format('YYYY-MM-DD HH:mm:ss')
             let formatEndDate = moment(endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
             const query = `SELECT  * from "Transactions" where "createdAt" between $1 and $2`
