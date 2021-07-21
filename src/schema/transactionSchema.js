@@ -13,6 +13,7 @@ module.exports = {
             properties: {
                 paymentType: { type: 'string' },
                 transactionType: { type: 'string' },
+                createdAt: { type: 'string' },
                 items: {
                     type: 'array',
                     items: {

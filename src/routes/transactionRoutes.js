@@ -10,7 +10,7 @@ async function routes(fastify, options) {
         async (req, reply) => {
             try {
                 const { id } = req.user
-                const { items, transactionType, paymentType } = req.body
+                const { items, transactionType, paymentType, createdAt } = req.body
                 let profit = 0
                 let totalPrice = 0
                 await client.query("BEGIN");
@@ -38,10 +38,11 @@ async function routes(fastify, options) {
                     return rows[0]
                 }));
 
-                let now = moment().format('YYYY-MM-DD HH:mm:ss')
+                let date = moment(createdAt, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
 
                 const query = 'INSERT INTO "Transactions"("userId", items, "transactionType", "paymentType", "totalPrice", profit, "createdAt") VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *'
-                const values = [id, JSON.stringify(items), transactionType, paymentType, totalPrice, profit, now]
+                const values = [id, JSON.stringify(items), transactionType, paymentType, totalPrice, profit, date]
+                console.log('values ===>', values, date, createdAt)
                 const { rows } = await client.query(query, values,)
                 const result = rows[0]
                 await client.query("COMMIT");
@@ -66,7 +67,7 @@ async function routes(fastify, options) {
         try {
 
             let formatStartDate = moment(startDate).subtract(1, 'day').startOf('day').format('YYYY-MM-DD HH:mm:ss')
-            let formatEndDate = moment(endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+            let formatEndDate = moment(endDate).subtract(1, 'day').endOf('day').format('YYYY-MM-DD HH:mm:ss')
 
             const query = `SELECT  * from "Transactions" where "createdAt" between $1 and $2`
             const values = [formatStartDate, formatEndDate]
