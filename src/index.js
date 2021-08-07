@@ -10,6 +10,9 @@ const transactionRoutes = require('./routes/transactionRoutes')
 const bcrypt = require('./plugins/bcrypt')
 const dotenv = require('./plugins/dotenv')
 const dbConnector = require('./plugins/db')
+
+
+
 const app = fastify({
     logger: {
         prettyPrint: {
@@ -19,13 +22,26 @@ const app = fastify({
     }
 })
 
+app.addContentTypeParser('text/csv', function (request, body, done) {
+    console.log('csv text ====>', body)
+    // jsoffParser(payload, function (err, body) {
+    done("", body)
+    // })
+})
+
+const opts = {
+    attachFieldsToBody: true,
+    addToBody: true,
+}
+app.register(require('fastify-multipart'), opts)
+
 app.register(dbConnector)
+
 app.register(require('fastify-swagger'), {
     exposeRoute: true,
     routePrefix: '/docs',
     swagger: {
         info: { title: 'omorfoo-api' },
-        // Add more options to get a nicer page ✨
     },
 })
 

@@ -47,6 +47,50 @@ module.exports = {
         },
     },
 
+    uploadProducts: {
+        description: 'upload products',
+        tags: ['product'],
+        headers: {
+            type: 'object',
+            properties: {
+                Authorization: { type: 'string' },
+            }
+        },
+        consumes: ['multipart/form-data'],
+        body: {
+            type: 'string',
+            properties: {
+                myField: { $ref: '#mySharedSchema' },
+            },
+        },
+
+        response: {
+            201: {
+                description: 'Successful response',
+                type: 'object',
+                properties: {
+                    status: { type: 'string' },
+                    data: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'number' },
+                            name: { type: 'string' },
+                            productCode: { type: 'string' },
+                            stock: { type: 'number' },
+                            minimalStock: { type: 'number' },
+                            price: { type: 'number' },
+                            capitalPrice: { type: 'number' },
+                            brand: { type: 'string' },
+                            type: { type: 'string' },
+                            createdAt: { type: 'string' },
+                        }
+                    }
+                }
+            }
+        },
+
+    },
+
     updateProduct: {
         description: 'Update product',
         tags: ['product'],

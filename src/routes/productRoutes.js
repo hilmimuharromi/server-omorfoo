@@ -1,4 +1,4 @@
-const { addProduct, updateProduct, deleteProduct, getAllProduct } = require('../schema/productSchema')
+const { addProduct, updateProduct, deleteProduct, getAllProduct, uploadProducts } = require('../schema/productSchema')
 
 
 async function routes(fastify, options) {
@@ -18,6 +18,38 @@ async function routes(fastify, options) {
             reply.code(201).send({
                 status: 'success',
                 data: result
+            })
+        } catch (error) {
+            reply.code(400).send(error)
+        }
+    });
+
+    fastify.post('/uploadproducts', {
+        preValidation: [fastify.authenticate, fastify.adminAuthorization],
+        // schema: uploadProducts
+    }, async (req, reply) => {
+        try {
+            const data = req.body
+            let csv = data.file[0].data.toString('utf8')
+            let arrayData = csv.split('\r\n')
+            arrayData.shift()
+            const insertData = []
+            arrayData.map((item, index) => {
+                let row = item.split(',')
+                if (row.length !== 8) throw new Error(`kolom tidak boleh kosong,  cek baris ke ${index + 1}`)
+                insertData.push(row)
+            })
+
+            const result = await Promise.all(insertData.map(async (item) => {
+                const query = 'INSERT INTO "Products"(name, "productCode", stock, "minimalStock", price, "capitalPrice", brand, type) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *'
+                const values = item
+                const { rows } = await client.query(query, values,
+                )
+                return rows[0]
+            }));
+            reply.code(201).send({
+                status: 'success',
+                data: result,
             })
         } catch (error) {
             reply.code(400).send(error)
